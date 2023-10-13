@@ -1,0 +1,50 @@
+import { NextApiRequest, NextApiResponse } from 'next';
+import jwt from 'jsonwebtoken';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'GET') {
+    const authorizationHeader = req.headers.authorization;
+
+    if (authorizationHeader) {
+      const token = authorizationHeader.split(' ')[1];
+
+      if (token) {
+        try {
+          if (!process.env.JWT_SECRET) {
+            res.status(500).json({ error: 'JWT_SECRET environment variable is not set' });
+            return;
+          }
+
+          const decodedToken = jwt.verify(token, process.env.JWT_SECRET) as { userId: string; email: string };
+          const user = await prisma.user.findUnique({
+            where: { id: decodedToken.userId },
+            include: {
+              role: true,
+              spots: true,
+              groupMembers: true,
+              catches: true,
+              chats: true,
+            },
+          });
+
+          if (user) {
+            res.status(200).json(user);
+          } else {
+            res.status(404).json({ error: 'User not found' });
+          }
+        } catch (error) {
+          res.status(401).json({ error: 'Invalid token' });
+        }
+      } else {
+        res.status(401).json({ error: 'No token provided' });
+      }
+    } else {
+      res.status(401).json({ error: 'No authorization header' });
+    }
+  } else {
+    res.status(405).end();
+  }
+}
