@@ -10,6 +10,7 @@ export type ProfileSectionProps = {
       } | null;
     } | null;
     isEditing: boolean;
+    setIsEditing: boolean;
   };
   
   
@@ -21,5 +22,6 @@ export type User = {
     role: {
       name: string | null;
     } | null;
+    setIsEditing: boolean;
   };
   

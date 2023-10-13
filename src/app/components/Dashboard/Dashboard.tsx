@@ -96,6 +96,12 @@ const Dashboard = () => {
   return (
     <div className="bg-black p-4 rounded-md shadow-md mt-2">
       <h1 className="text-2xl font-bold">Tableau de bord</h1>
+      <button
+        onClick={handleLogout}
+        className="px-4 py-2 bg-red-500 text-white rounded-md"
+      >
+        Déconnexion
+      </button>
       <div className="mt-4">
         <p className="text-lg font-semibold">Bienvenue, {user.username}</p>
         <div className="mt-4">
@@ -134,6 +140,7 @@ const Dashboard = () => {
                 user={user}
                 onSave={handleSaveEdit}
                 onCancel={handleCancelEdit}
+                setIsEditing={setIsEditing}
               />
             ) : (
               <ProfileSection toggleEditing={toggleEditing}

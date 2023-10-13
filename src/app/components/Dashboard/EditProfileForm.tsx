@@ -1,13 +1,16 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { EditProfileFormProps } from "../../../../types/editProfileForm"
 
-const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSave, onCancel }) => {
+
+const EditProfileForm: React.FC<EditProfileFormProps & { setIsEditing: (value: boolean) => void }> = ({ user, onSave, onCancel, setIsEditing }) => {
   const [formData, setFormData] = useState({
     username: user.username || '', 
     city: user.city || '',
     department: user.department || '',
     email: user.email || '',
   });
+
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -33,6 +36,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSave, onCance
 
         if (response.ok) {
           onSave(formData);
+          setIsEditing(false);
         } else {
           console.error('La sauvegarde a échoué.');
         }
