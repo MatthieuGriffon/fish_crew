@@ -1,17 +1,17 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { usePathname } from 'next/navigation';
-
 import ProfileSection from './ProfileSection';
 import SettingsSection from './SettingsSection';
 import EditProfileForm from './EditProfileForm';
+import { ProfileSectionProps, User } from "../../../../types/dashboard";
 
 const Dashboard = () => {
   const authContext = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleSaveEdit = async(updatedUserData:{
+  const handleSaveEdit = async (updatedUserData: {
     username: string;
     city: string;
     department: string;
@@ -25,18 +25,21 @@ const Dashboard = () => {
         },
         body: JSON.stringify(updatedUserData),
       });
-  
+
       if (authContext && authContext.updateUser && authContext.user) {
         const updatedUser = {
           ...authContext.user,
           city: updatedUserData.city || authContext.user.city,
           department: updatedUserData.department || authContext.user.department,
           email: updatedUserData.email || authContext.user.email,
-          username: updatedUserData.username !== undefined ? updatedUserData.username : authContext.user.username,
+          username:
+            updatedUserData.username !== undefined
+              ? updatedUserData.username
+              : authContext.user.username,
         };
         authContext.updateUser(updatedUser);
       }
-  
+
       if (response.ok) {
         setIsEditing(false);
       } else {
@@ -46,11 +49,11 @@ const Dashboard = () => {
       console.error('Erreur lors de la sauvegarde:', error);
     }
   };
-  
+
   const handleCancelEdit = () => {
     setIsEditing(false);
   };
-  
+
   const toggleEditing = () => {
     setIsEditing(!isEditing);
   };
@@ -74,7 +77,9 @@ const Dashboard = () => {
   };
 
   if (!authContext) {
-    throw new Error('AuthContext is undefined, make sure you are rendering Dashboard inside AuthProvider');
+    throw new Error(
+      'AuthContext is undefined, make sure you are rendering Dashboard inside AuthProvider'
+    );
   }
 
   const { user } = authContext;
@@ -93,7 +98,7 @@ const Dashboard = () => {
       <h1 className="text-2xl font-bold">Tableau de bord</h1>
       <div className="mt-4">
         <p className="text-lg font-semibold">Bienvenue, {user.username}</p>
-        <div className='mt-4'>
+        <div className="mt-4">
           <ul className="flex space-x-4">
             <li>
               <a
@@ -122,20 +127,21 @@ const Dashboard = () => {
               </a>
             </li>
           </ul>
-          <button onClick={toggleEditing} className="mt-2 p-2 bg-blue-500 text-white rounded-md">
-            {isEditing ? 'Fermer l\'édition' : 'Modifier les informations'}
-          </button>
-          {activeTab === 'profile' && (
-            isEditing ? <EditProfileForm
-            user={user}
-            onSave={handleSaveEdit}
-            onCancel={handleCancelEdit}
-            /> : <ProfileSection />
+          
+          {activeTab === 'profile' && user && user.username && (
+            isEditing ? (
+              <EditProfileForm
+                user={user}
+                onSave={handleSaveEdit}
+                onCancel={handleCancelEdit}
+              />
+            ) : (
+              <ProfileSection toggleEditing={toggleEditing}
+                user={user}
+                isEditing={isEditing}  />
+            )
           )}
           {activeTab === 'settings' && <SettingsSection />}
-        </div>
-        <div className='flex'>
-        <button className='rounded bg-slate-700 m-1 p-2' onClick={handleLogout}>Déconnexion</button>
         </div>
       </div>
     </div>

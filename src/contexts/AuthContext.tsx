@@ -6,6 +6,17 @@ export interface User {
   city: string | null;
   department: string | null;
 }
+export interface ProfileSectionPropsWithoutRole {
+  toggleEditing: () => void;
+  user: {
+    username: string | null;
+    email: string | null;
+    city: string | null;
+    department: string | null;
+  } | null;
+  isEditing: boolean;
+}
+
 
 interface EditProfileFormProps {
   user: {

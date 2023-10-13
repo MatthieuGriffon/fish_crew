@@ -1,20 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-
-interface EditProfileFormProps {
-  user: {
-    username: string | null;
-    city: string | null;
-    department: string | null;
-    email: string | null;
-  };
-  onSave: (formData: {
-    username: string;
-    city: string;
-    department: string;
-    email: string;
-  }) => void;
-  onCancel: () => void;
-}
+import { EditProfileFormProps } from "../../../../types/editProfileForm"
 
 const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
