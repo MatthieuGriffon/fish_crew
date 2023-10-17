@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../../contexts/AuthContext';
-import { usePathname } from 'next/navigation';
 import ProfileSection from './ProfileSection';
 import SettingsSection from './SettingsSection';
+import GroupSection from './GroupSection';
 import EditProfileForm from './EditProfileForm';
 import { ProfileSectionProps, User } from "../../../../types/dashboard";
 
@@ -122,6 +122,19 @@ const Dashboard = () => {
             <li>
               <a
                 href="#"
+                onClick={() => setActiveTab('group')}
+                className={`px-8 py-2 rounded-t-lg ${
+                  activeTab === 'group'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-600 hover:bg-blue-200 hover:text-blue-600'
+                }`}
+              >
+                Groupes
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
                 onClick={() => setActiveTab('settings')}
                 className={`px-8 py-2 rounded-t-lg ${
                   activeTab === 'settings'
@@ -132,6 +145,7 @@ const Dashboard = () => {
                 Paramètres
               </a>
             </li>
+           
           </ul>
           
           {activeTab === 'profile' && user && user.username && (
@@ -148,7 +162,9 @@ const Dashboard = () => {
                 isEditing={isEditing}  />
             )
           )}
+          {activeTab === 'group' && <GroupSection />}
           {activeTab === 'settings' && <SettingsSection />}
+         
         </div>
       </div>
     </div>

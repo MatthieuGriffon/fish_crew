@@ -3,6 +3,8 @@ import SignupForm from './components/Form/SignupForm';
 import SigninForm from './components/Form/SigninForm';
 import Dashboard from './components/Dashboard/Dashboard';
 import { AuthProvider } from '../contexts/AuthContext';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const Home = () => {
   return (

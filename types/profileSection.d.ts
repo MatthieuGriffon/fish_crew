@@ -1,6 +1,7 @@
 export interface ProfileSectionProps {
     toggleEditing: () => void;
     user: {
+      id : string | null;
       username: string | null;
       email: string | null;
       city: string | null;

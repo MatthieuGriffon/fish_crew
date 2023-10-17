@@ -52,7 +52,7 @@ const EditProfileForm: React.FC<EditProfileFormProps & { setIsEditing: (value: b
     <form onSubmit={handleSubmit}>
       <div className="mb-4">
         <label htmlFor="city" className="block font-semibold">Ville :</label>
-        <input
+        <input className='text-zinc-950'
           type="text"
           id="city"
           name="city"
@@ -62,7 +62,7 @@ const EditProfileForm: React.FC<EditProfileFormProps & { setIsEditing: (value: b
       </div>
       <div className="mb-4">
         <label htmlFor="department" className="block font-semibold">Département :</label>
-        <input
+        <input className='text-zinc-950'
           type="text"
           id="department"
           name="department"
@@ -72,7 +72,7 @@ const EditProfileForm: React.FC<EditProfileFormProps & { setIsEditing: (value: b
       </div>
       <div className="mb-4">
         <label htmlFor="email" className="block font-semibold">Adresse e-mail :</label>
-        <input
+        <input className='text-zinc-950'
           type="email"
           id="email"
           name="email"

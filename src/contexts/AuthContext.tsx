@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
 export interface User {
+  id: string |null;
   username: string | null;
   email: string | null;
   city: string | null;
@@ -69,6 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const userData = await response.json();
 
             const updatedUser: User = {
+              id: userData.id,
               username: userData.username,
               email: userData.email,
               city: userData.city !== undefined ? userData.city : null,

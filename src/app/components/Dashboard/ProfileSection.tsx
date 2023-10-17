@@ -46,7 +46,7 @@ const ProfileSection: React.FC<ProfileSectionProps | ProfileSectionPropsWithoutR
       
 
     <div>
-      <p className='text-3xl p-2 bg-red-800 rounded-sm w-1/3 mt-3'>ProfileSection</p>
+      <p className='text-3xl p-2 bg-red-800 rounded-sm w-1/3 mt-3'>Mon Profil</p>
 
       <div>
         {userData ? (
