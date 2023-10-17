@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const userId = req.query.userId as string; // Récupérez l'ID de l'utilisateur depuis les paramètres de requête
+    const userId = req.query.userId as string;
     console.log ('userId de la requete group.ts', userId)
     if (!userId) {
       res.status(400).json({ error: 'Missing userId parameter' });
@@ -13,7 +13,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      // Utilisez l'ID de l'utilisateur pour récupérer les groupes auxquels il appartient
       const userGroups = await prisma.groupMember.findMany({
         where: {
           userId: userId,
@@ -22,9 +21,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           group: true,
         },
       });
-      console.log ('userGroups de la requete group.ts', userGroups)
-      // Vous avez maintenant les groupes auxquels l'utilisateur appartient dans userGroups
-      res.status(200).json(userGroups);
+
+      const allGroupMembers: { [key: string]: Array<any> } = {};
+
+      for (let groupItem of userGroups) {
+        const groupId = groupItem.group.id;
+        const groupMembers = await prisma.groupMember.findMany({
+          where: {
+            groupId: groupId,
+          },
+          select: {
+            user: true,
+            joinedAt: true,
+          },
+          orderBy: {
+            joinedAt: 'asc',
+          },
+        });
+
+        allGroupMembers[groupId] = groupMembers;
+      }
+
+      console.log ('userGroups de la requete group.ts', userGroups);
+      console.log('allGroupMembers de la requete group.ts', allGroupMembers);
+
+      // Combinez les données ou ajustez selon les besoins avant d'envoyer la réponse
+      res.status(200).json({
+        userGroups,
+        allGroupMembers,
+      });
     } catch (error) {
       console.error('Erreur lors de la récupération des groupes:', error);
       res.status(500).json({ error: 'Internal server error' });
