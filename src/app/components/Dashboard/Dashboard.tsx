@@ -88,20 +88,22 @@ const Dashboard = () => {
     return (
       <div className="bg-black-200 p-4 rounded-md">
         <h1 className="text-2xl font-bold">Tableau de bord</h1>
-        <div className="text-red-600">Veuillez vous connecter</div>
+        <div className="text-600">Veuillez vous connecter</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-black p-4 rounded-md shadow-md mt-2">
+    <div className="bg-gray-900 bg-opacity-70 p-4 rounded-md shadow-md mt-2 w-[60%]">
+    <div className='bg-black flex items-center justify-between bg-opacity-20 p-4 shadow-md rounded-md'>
       <h1 className="text-2xl font-bold">Tableau de bord</h1>
       <button
         onClick={handleLogout}
-        className="px-4 py-2 bg-red-500 text-white rounded-md"
+        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
       >
         Déconnexion
       </button>
+    </div>
       <div className="mt-4">
         <p className="text-lg font-semibold">Bienvenue, {user.username}</p>
         <div className="mt-4">
@@ -129,7 +131,7 @@ const Dashboard = () => {
                     : 'bg-gray-200 text-gray-600 hover:bg-blue-200 hover:text-blue-600'
                 }`}
               >
-                Groupes
+                Mes groupes
               </a>
             </li>
             <li>

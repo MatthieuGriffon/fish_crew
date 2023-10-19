@@ -51,44 +51,38 @@ const SigninForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center bg-white shadow-md rounded px-7 pt-1 pb-1 mb-1">
-      <div className="mb-4">
-        <label htmlFor="email" className="text-gray-700 text-sm font-bold mb-2">
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-      <div className="mb-6">
-        <label htmlFor="password" className=" text-gray-700 text-sm font-bold mb-2">
-          Mot de passe
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-      <div className="flex items-center justify-between">
-        <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          Se connecter
-        </button>
-        {error && <div className="text-red-500">{error}</div>}
-      </div>
+    <form onSubmit={handleSubmit} className="flex items-center space-x-3 p-2 shadow-2xl rounded text-xs">
+      <label htmlFor="email" className="text-white-700 font-medium text-xs">
+        Email
+      </label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+        className="text-xs shadow appearance-none border rounded w-40 py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      />
+      <label htmlFor="password" className="text-white-700 font-medium text-xs">
+        Mot de passe
+      </label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
+        required
+        className="text-xs shadow appearance-none border rounded w-40 py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      />
+      <button
+        type="submit"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded focus:outline-none focus:shadow-outline"
+      >
+        Connexion
+      </button>
+      {error && <div className="text-red-500">{error}</div>}
     </form>
   );
 };

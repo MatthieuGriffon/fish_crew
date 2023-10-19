@@ -119,9 +119,9 @@ const GroupSection: FC = () => {
   }
 
   return (
-    <div className="bg-gray-200 p-6 space-y-4">
+    <div className="bg-black bg-opacity-50 p-6 rounded-md shadow-md w-[70%] mx-auto space-y-4 max-h-[70vh] overflow-y-auto mt-8">
       <button
-        className="mb-4 p-2 bg-blue-500 text-white rounded"
+        className="mb-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         onClick={() => setShowCreateGroup(prevState => !prevState)}>
         {showCreateGroup ? 'Afficher les groupes' : 'Creer un nouveau groupe'}
       </button>
@@ -130,7 +130,7 @@ const GroupSection: FC = () => {
         <CreateGroupe onGroupCreated={handleGroupCreated} />
       ) : (
         userGroups.map((groupItem) => (
-          <div key={groupItem.group.id} className="bg-white shadow-lg p-6 border rounded-lg space-y-4">
+          <div key={groupItem.group.id} className="bg-white p-6 border rounded-lg space-y-4">
             <div className="flex justify-between items-center">
               <p className="text-xl text-gray-800 font-semibold" id={`groupName-${groupItem.group.id}`}>
                 {groupItem.group.name}
@@ -169,7 +169,7 @@ const GroupSection: FC = () => {
 
   {isConfirmModalOpen && (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="bg-gray-400 rounded-lg shadow-md p-6 w-96">
+      <div className="bg-gray-400 rounded-lg shadow-md p-6 w-[20%] mx-auto">
         <h2 className="text-2xl font-semibold mb-4">Supprimer le groupe</h2>
         <p className="text-gray-800">Etes vous sur de vouloir supprimer complétement le groupe?</p>
         <div className="mt-4 flex justify-end">

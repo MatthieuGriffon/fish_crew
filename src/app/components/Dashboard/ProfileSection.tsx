@@ -40,35 +40,37 @@ const ProfileSection: React.FC<ProfileSectionProps | ProfileSectionPropsWithoutR
 
     fetchUserData();
   }, [user]);
-
   return (
-    <div>
-      
-
-    <div>
-      <p className='text-3xl p-2 bg-red-800 rounded-sm w-1/3 mt-3'>Mon Profil</p>
-
-      <div>
+    <div className="bg-white bg-opacity-20 p-4 rounded-md shadow-md mt-10 w-[80%] mx-auto">
+      <div className="text-center mb-4">
+        <p className='text-3xl font-bold uppercase text-center bg-black flex items-center justify-center bg-opacity-50 p-4 shadow-md rounded-md'>
+        Mon Profil
+      </p>
+     </div>
+  
+      <div className="bg-gray-100 bg-opacity-10 p-4 rounded-md shadow-inner mb-4">
         {userData ? (
           <>
-            <p>Nom d'utilisateur : {userData.username || 'N/A'}</p>
-            <p>Adresse e-mail : {userData.email || 'N/A'}</p>
-            <p>Ville : {userData.city || 'N/A'}</p>
-            <p>Département : {userData.department || 'N/A'}</p>
-            <p>Rôle : {userData.role?.name || 'N/A'}</p>
+            <p className="mb-2"><span className="font-bold">Nom d'utilisateur :</span> {userData.username || 'N/A'}</p>
+            <p className="mb-2"><span className="font-bold">Adresse e-mail :</span> {userData.email || 'N/A'}</p>
+            <p className="mb-2"><span className="font-bold">Ville :</span> {userData.city || 'N/A'}</p>
+            <p className="mb-2"><span className="font-bold">Département :</span> {userData.department || 'N/A'}</p>
+            <p className="mb-2"><span className="font-bold">Rôle :</span> {userData.role?.name || 'N/A'}</p>
           </>
         ) : (
-          <p>Chargement des données...</p>
+          <p className="text-center">Chargement des données...</p>
         )}
       </div>
+  
+      <button 
+        onClick={toggleEditing} 
+        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+      >
+        {isEditing ? 'Fermer l\'édition' : 'Modifier les informations'}
+      </button>
     </div>
-    <button onClick={toggleEditing} className="mt-2 p-2 bg-blue-500 text-white rounded-md">
-        
-  {isEditing ? 'Fermer l\'édition' : 'Modifier les informations'}
-</button>
-    </div>
-    
   );
-};
+}  
+ 
 
 export default ProfileSection;
