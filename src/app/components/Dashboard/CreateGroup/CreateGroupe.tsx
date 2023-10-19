@@ -73,21 +73,21 @@ const handleSubmit = async (e: React.FormEvent) => {
   
 
   return (
-    <div className="p-4 max-w-md mx-auto">
+    <div className="bg-black bg-opacity-50 p-6 rounded-md shadow-md w-[70%] mx-auto space-y-4 max-h-[60vh] overflow-y-auto">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex flex-col space-y-2">
-          <label htmlFor="name" className="text-lg text-black">Nom du groupe:</label>
+          <label htmlFor="name" className="text-lg text-white">Nom du groupe:</label>
           <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required 
                  className="p-2 text-black border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
         </div>
         <div className="flex flex-col space-y-2">
-          <label htmlFor="description" className="text-lg text-black">Description:</label>
+          <label htmlFor="description" className="text-lg text-white">Description:</label>
           <textarea id="description" name="description" value={formData.description} onChange={handleChange} required 
                     className="p-2 text-black border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 h-28" />
         </div>
         <div className="flex items-center space-x-2">
           <input type="checkbox" name="isPublic" checked={formData.isPublic} onChange={handleChange} className="focus:ring-blue-400" />
-          <label className="text-lg text-black">Est-ce que le groupe est public?</label>
+          <label className="text-lg text-white">Est-ce que le groupe est public?</label>
         </div>
         <div>
           <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400">

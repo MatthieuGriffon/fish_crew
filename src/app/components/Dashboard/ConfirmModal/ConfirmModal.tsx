@@ -12,7 +12,7 @@ const ConfirmModal: FC<ConfirmModalProps> = ({ isOpen, onConfirm, onCancel }) =>
     if (!isOpen) return null;
 
     return (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed top-0 left-0 w-full h-full bg-black flex items-center justify-center z-50">
             <div className="bg-white p-4 rounded-md shadow-lg w-96">
                 <p className="mb-4">
                     Êtes-vous sûr de vouloir supprimer le groupe ? Toutes les informations du groupe seront définitivement perdues.

@@ -41,14 +41,14 @@ const ProfileSection: React.FC<ProfileSectionProps | ProfileSectionPropsWithoutR
     fetchUserData();
   }, [user]);
   return (
-    <div className="bg-white bg-opacity-20 p-4 rounded-md shadow-md mt-10 w-[80%] mx-auto">
+    <div className="bg-black bg-opacity-50 p-4 rounded-md shadow-md mt-8 w-[80%] mx-auto min-h-[50vh]">
       <div className="text-center mb-4">
         <p className='text-3xl font-bold uppercase text-center bg-black flex items-center justify-center bg-opacity-50 p-4 shadow-md rounded-md'>
         Mon Profil
       </p>
      </div>
   
-      <div className="bg-gray-100 bg-opacity-10 p-4 rounded-md shadow-inner mb-4">
+      <div className="bg-gray-900 bg-opacity-70 shadow-md p-4 rounded-md shadow-inner mb-4">
         {userData ? (
           <>
             <p className="mb-2"><span className="font-bold">Nom d'utilisateur :</span> {userData.username || 'N/A'}</p>
@@ -62,12 +62,14 @@ const ProfileSection: React.FC<ProfileSectionProps | ProfileSectionPropsWithoutR
         )}
       </div>
   
-      <button 
-        onClick={toggleEditing} 
-        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
-      >
+      <div className='flex w-80 bg-black bg-opacity-50 p-6 rounded-md shadow-md w-[70%] mx-auto space-y-4 max-h-[50vh] overflow-y-auto mt-8 justify-center items-center'>
+    <button
+        onClick={toggleEditing}
+        className="p-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+    >
         {isEditing ? 'Fermer l\'édition' : 'Modifier les informations'}
-      </button>
+    </button>
+    </div>
     </div>
   );
 }  

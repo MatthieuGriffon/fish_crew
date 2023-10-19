@@ -86,7 +86,7 @@ const Dashboard = () => {
 
   if (!user) {
     return (
-      <div className="bg-black-200 p-4 rounded-md">
+      <div className="bg-black-200 p-4 rounded-md ">
         <h1 className="text-2xl font-bold">Tableau de bord</h1>
         <div className="text-600">Veuillez vous connecter</div>
       </div>
@@ -94,7 +94,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="bg-gray-900 bg-opacity-70 p-4 rounded-md shadow-md mt-2 w-[60%]">
+    <div className="bg-gray-900 bg-opacity-70 p-4 rounded-md shadow-md mt-2 w-[60%] max-h-[80vh] overflow-y:hidden">
     <div className='bg-black flex items-center justify-between bg-opacity-20 p-4 shadow-md rounded-md'>
       <h1 className="text-2xl font-bold">Tableau de bord</h1>
       <button
@@ -105,9 +105,10 @@ const Dashboard = () => {
       </button>
     </div>
       <div className="mt-4">
-        <p className="text-lg font-semibold">Bienvenue, {user.username}</p>
+      <p className="text-lg font-semibold">Bienvenue, {user.username}. Depuis le tableau de bord, vous pouvez modifier votre profil, gérer les groupes auxquels vous appartenez et en créer de nouveaux.</p>
+
         <div className="mt-4">
-          <ul className="flex space-x-4">
+          <ul className="flex space-x-4 position-fixed">
             <li>
               <a
                 href="#"
