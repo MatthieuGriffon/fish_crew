@@ -1,23 +1,31 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../../../contexts/AuthContext';
-import { getToken } from '../../../utils/auth';
-
 
 interface FormData {
+    id: string;
     name: string;
     description: string;
     isPublic: boolean;
 }
 
-interface CreateGroupeProps {
-  onGroupCreated: () => void;
+interface EditGroupProps {
+    group: {
+      id: string;
+      name: string;
+      description: string;
+      isPublic: boolean;
+    };
+    onGroupUpdated: () => void;
 }
 
-const CreateGroupe: React.FC<CreateGroupeProps> = ({ onGroupCreated }) =>{
+const EditGroup: React.FC<EditGroupProps> = ({ group, onGroupUpdated }) => {
+  const authContext = useContext(AuthContext);
+
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    description: '',
-    isPublic: false
+    id: group.id,
+    name: group.name,
+    description: group.description,
+    isPublic: group.isPublic,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -29,45 +37,37 @@ const CreateGroupe: React.FC<CreateGroupeProps> = ({ onGroupCreated }) =>{
       ...prevState,
       [name]: isCheckbox ? checked : value
     } as any));
-}
+  }
 
-const authContext = useContext(AuthContext);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  // Vérifier si authContext et authContext.user sont définis
-  if (!authContext || !authContext.user) {
+    if (!authContext || !authContext.user) {
       console.error("Contexte d'authentification ou utilisateur non défini");
       return;
-  }
-
-  try {
-    const response = await fetch('/api/groups/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        ...formData,
-        userId: authContext.user.id
-      })
-    });
-    console.log('ID de l\'utilisateur:', authContext.user.id);
-
-    if (response.ok) {
-      const newGroup = await response.json();
-      console.log('Group created:', newGroup);
-      onGroupCreated();  // <-- Appeler la fonction ici
-    } else {
-      const data = await response.json();
-      console.error(data.error);
     }
-  } catch (error) {
-    console.error('Error while creating the group:', error);
+
+    try {
+        console.log("FormData being sent:", formData);
+      const response = await fetch(`/api/groups/edit`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        console.log('Group updated successfully');
+        onGroupUpdated();
+      } else {
+        const data = await response.json();
+        console.error(data.error);
+      }
+    } catch (error) {
+      console.error('Error while updating the group:', error);
+    }
   }
-}
 
   return (
     <div className="bg-black bg-opacity-50 p-6 rounded-md shadow-md w-[70%] mx-auto space-y-4 max-h-[60vh] overflow-y-auto">
@@ -88,7 +88,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         </div>
         <div>
           <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400">
-            Créer le groupe
+            Mettre à jour le groupe
           </button>
         </div>
       </form>
@@ -96,4 +96,4 @@ const handleSubmit = async (e: React.FormEvent) => {
   );
 }
 
-export default CreateGroupe;
+export default EditGroup;

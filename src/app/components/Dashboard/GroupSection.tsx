@@ -4,7 +4,9 @@ import { getToken } from '../../utils/auth';
 import { GroupMember } from '../../../../types/group';
 import CreateGroupe from './CreateGroup/CreateGroupe';
 import ConfirmModal from './ConfirmModal/ConfirmModal';
+import EditGroup from './EditGroup/EditGroup';
 
+ {/* Component pour afficher les messages */}
 interface MessageWrapperProps {
   message: string;
 }
@@ -14,11 +16,12 @@ const MessageWrapper: FC<MessageWrapperProps> = ({ message }) => (
     <p>{message}</p>
   </div>
 );
-
+ {/* Composant principal pour la section Groupes*/}
 const GroupSection: FC = () => {
+    {/* Contexte et token d'authentification */}
   const authContext = useContext(AuthContext);
   const token = getToken();
-
+    {/* Etats du composant */}
   const [userGroups, setUserGroups] = useState<{
     group: any;
     id: string;
@@ -32,12 +35,23 @@ const GroupSection: FC = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [groupToDelete, setGroupToDelete] = useState<string | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [groupToEdit, setGroupToEdit] = useState<any | null>(null);
+  
 
+    
   const handleGroupCreated = () => {
     setShowCreateGroup(false);
     setRefreshKey(prevKey => prevKey + 1);
   };
 
+  const handleEditGroup = (group: any) => {
+    setGroupToEdit(group);
+    setIsEditModalOpen(true);
+    setRefreshKey(prevKey => prevKey + 1);
+  };
+
+ 
   const handleDeleteGroup = (groupId: string) => {
     setGroupToDelete(groupId);
     setIsConfirmModalOpen(true);
@@ -117,7 +131,7 @@ const GroupSection: FC = () => {
   if (!authContext) {
     return <MessageWrapper message="Authentification requise." />;
   }
-
+  // { Rendu du composant principal }
   return (
     <>
     <div className="bg-black bg-opacity-50 p-6 rounded-md shadow-md w-[70%] mx-auto space-y-4 max-h-[48vh] overflow-y-auto mt-8">
@@ -126,20 +140,29 @@ const GroupSection: FC = () => {
       ) : (
         
         userGroups.map((groupItem) => (
-          <div 
-              key={groupItem.group.id} 
-              className="bg-gray-900 bg-opacity-70 shadow-md p-6 border rounded-lg space-y-4 m-3 ${index === 0 ? 'mt-32' : 'mt-8'}`">
-            <div
-               className="flex justify-between items-center">
+          <div key={groupItem.group.id} className="bg-gray-900 bg-opacity-70 shadow-md p-6 border rounded-lg space-y-4 m-3">
+            <div className="flex justify-between items-center">
               <p className="text-xl text-white font-semibold" id={`groupName-${groupItem.group.id}`}>
                 {groupItem.group.name}
               </p>
               {groupMembers[groupItem.group.id]?.length > 0 && authContext.user && authContext.user.id && groupMembers[groupItem.group.id][0].user.id === authContext.user.id && (
-                <button onClick={() => handleDeleteGroup(groupItem.group.id)} className="text-red-600 border border-red-600 px-2 py-1 rounded-md">
-                  Supprimer le groupe
-                </button>
+                <div className="flex flex-col space-y-2">
+                  <button onClick={() => handleEditGroup(groupItem.group)} className="text-blue-600 border border-blue-600 px-2 py-1 rounded-md">
+                    Éditer le groupe
+                  </button>
+                  <button onClick={() => handleDeleteGroup(groupItem.group.id)} className="text-red-600 border border-red-600 px-2 py-1 rounded-md">
+                    Supprimer le groupe
+                  </button>
+                </div>
               )}
             </div>
+            {isEditModalOpen && groupToEdit && groupToEdit.id === groupItem.group.id && (
+              <EditGroup group={groupToEdit} onGroupUpdated={() => {
+                setGroupToEdit(null);
+                setIsEditModalOpen(false);
+                setRefreshKey(prevKey => prevKey + 1);
+              }} />
+            )}
             <div>
               <label className="block text-sm text-white font-semibold mb-1" htmlFor={`groupDescription-${groupItem.group.id}`}>
                 Description du groupe
@@ -163,6 +186,7 @@ const GroupSection: FC = () => {
             </div>
           </div>
         ))
+        
       )}
 
 

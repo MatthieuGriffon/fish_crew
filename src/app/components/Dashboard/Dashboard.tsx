@@ -83,7 +83,6 @@ const Dashboard = () => {
   }
 
   const { user } = authContext;
-
   if (!user) {
     return (
       <div className="bg-black-200 p-4 rounded-md ">
@@ -92,7 +91,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
   return (
     <div className="bg-gray-900 bg-opacity-70 p-4 rounded-md shadow-md mt-2 w-[60%] max-h-[80vh] overflow-y:hidden">
     <div className='bg-black flex items-center justify-between bg-opacity-20 p-4 shadow-md rounded-md'>
@@ -145,7 +143,7 @@ const Dashboard = () => {
                     : 'bg-gray-200 text-gray-600 hover:bg-blue-200 hover:text-blue-600'
                 }`}
               >
-                Paramètres
+                Mes Prises
               </a>
             </li>
            
