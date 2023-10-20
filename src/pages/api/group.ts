@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     const userId = req.query.userId as string;
-    console.log ('userId de la requete group.ts', userId)
     if (!userId) {
       res.status(400).json({ error: 'Missing userId parameter' });
       return;
@@ -41,11 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         allGroupMembers[groupId] = groupMembers;
       }
-
-      console.log ('userGroups de la requete group.ts', userGroups);
-      console.log('allGroupMembers de la requete group.ts', allGroupMembers);
-
-      // Combinez les données ou ajustez selon les besoins avant d'envoyer la réponse
       res.status(200).json({
         userGroups,
         allGroupMembers,

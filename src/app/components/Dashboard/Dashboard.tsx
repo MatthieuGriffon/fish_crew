@@ -92,7 +92,7 @@ const Dashboard = () => {
     );
   }
   return (
-    <div className="bg-gray-900 bg-opacity-70 p-4 rounded-md shadow-md mt-2 w-[60%] max-h-[80vh] overflow-y:hidden">
+    <div className="bg-gray-900 bg-opacity-70 p-4 rounded-md shadow-md mt-2 w-[90%] max-h-[80vh] overflow-y:hidden">
     <div className='bg-black flex items-center justify-between bg-opacity-20 p-4 shadow-md rounded-md'>
       <h1 className="text-2xl font-bold">Tableau de bord</h1>
       <button

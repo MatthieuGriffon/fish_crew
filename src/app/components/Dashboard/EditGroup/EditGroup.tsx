@@ -48,7 +48,7 @@ const EditGroup: React.FC<EditGroupProps> = ({ group, onGroupUpdated }) => {
     }
 
     try {
-        console.log("FormData being sent:", formData);
+       
       const response = await fetch(`/api/groups/edit`, {
         method: 'PUT',
         headers: {
@@ -58,7 +58,7 @@ const EditGroup: React.FC<EditGroupProps> = ({ group, onGroupUpdated }) => {
       });
 
       if (response.ok) {
-        console.log('Group updated successfully');
+        
         onGroupUpdated();
       } else {
         const data = await response.json();

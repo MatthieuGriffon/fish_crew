@@ -5,6 +5,9 @@ import { GroupMember } from '../../../../types/group';
 import CreateGroupe from './CreateGroup/CreateGroupe';
 import ConfirmModal from './ConfirmModal/ConfirmModal';
 import EditGroup from './EditGroup/EditGroup';
+import AddMemberModal from './AddMemberModal/AddMemberModal';
+import ConfirmDeleteModal from './ConfirmDeleteModal/ConfirmDeleteModal';
+import RemoveMemberModal from './RemoveMemberModal/RemoveMemberModal';
 
  {/* Component pour afficher les messages */}
 interface MessageWrapperProps {
@@ -37,9 +40,48 @@ const GroupSection: FC = () => {
   const [groupToDelete, setGroupToDelete] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [groupToEdit, setGroupToEdit] = useState<any | null>(null);
-  
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
+  const [groupToAddMember, setGroupToAddMember] = useState<any | null>(null);
+  const [isRemoveMemberModalOpen, setIsRemoveMemberModalOpen] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState<{ member: GroupMember, groupId: string } | null>(null);
 
-    
+
+  const handleAddMember = (group: any) => {
+    setGroupToAddMember(group);
+    setIsAddMemberModalOpen(true);
+    setRefreshKey(prevKey => prevKey + 1);
+  };
+
+  const submitAddMember = async (email: string) => {
+    if (!groupToAddMember) {
+        console.error('Erreur : le groupe n’est pas sélectionné.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/groups/add-member', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ groupId: groupToAddMember.id, email }),
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            console.error(data.error);
+            // Vous pouvez ajouter une notification ou une alerte ici pour informer l'utilisateur
+            return;
+        }
+        setIsAddMemberModalOpen(false);
+        setRefreshKey(prevKey => prevKey + 1);
+    } catch (error) {
+        console.error('Erreur lors de l’ajout du membre:', error);
+       
+    }
+  };
+
+
   const handleGroupCreated = () => {
     setShowCreateGroup(false);
     setRefreshKey(prevKey => prevKey + 1);
@@ -51,18 +93,17 @@ const GroupSection: FC = () => {
     setRefreshKey(prevKey => prevKey + 1);
   };
 
- 
   const handleDeleteGroup = (groupId: string) => {
     setGroupToDelete(groupId);
     setIsConfirmModalOpen(true);
   };
 
   const confirmDeleteGroup = async () => {
-    console.log("Tentative de suppression du groupe", groupToDelete);
-
     if (!groupToDelete) {
       return;
     }
+  
+  
 
     try {
       const response = await fetch('/api/groups/delete', {
@@ -80,8 +121,6 @@ const GroupSection: FC = () => {
         const data = await response.json();
         throw new Error(data.error || 'Une erreur s’est produite lors de la suppression du groupe.');
       }
-
-      console.log("Groupe supprimé avec succès");
       setRefreshKey(prevKey => prevKey + 1);
 
     } catch (error) {
@@ -91,6 +130,38 @@ const GroupSection: FC = () => {
     setIsConfirmModalOpen(false);
     setGroupToDelete(null);
   };
+
+  const removeGroupMember = async () => {
+    if (!memberToRemove || !memberToRemove.groupId) {
+        console.error('Erreur : Membre ou groupe non sélectionné.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/groups/remove-member', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              groupId: memberToRemove.groupId, 
+              userId: memberToRemove.member.user.id 
+            }),
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            console.error(data.error);
+            // Vous pouvez ajouter une notification ou une alerte ici pour informer l'utilisateur
+            return;
+        }
+        setIsRemoveMemberModalOpen(false);
+        setRefreshKey(prevKey => prevKey + 1);
+    } catch (error) {
+        console.error('Erreur lors de la suppression du membre:', error);
+    }
+};
+
 
   async function fetchUserGroups() {
     if (token && authContext?.user) {
@@ -153,6 +224,9 @@ const GroupSection: FC = () => {
                   <button onClick={() => handleDeleteGroup(groupItem.group.id)} className="text-red-600 border border-red-600 px-2 py-1 rounded-md">
                     Supprimer le groupe
                   </button>
+                  <button onClick={() => handleAddMember(groupItem.group)} className="text-green-600 border border-green-600 px-2 py-1 rounded-md">
+                  Ajouter un membre
+                  </button>
                 </div>
               )}
             </div>
@@ -176,42 +250,46 @@ const GroupSection: FC = () => {
                 Membres du groupe
               </label>
               <ul className="list-disc list-inside space-y-2" id={`groupMembers-${groupItem.group.id}`}>
-                {groupMembers[groupItem.group.id]?.sort((a, b) => new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime()).map((member, index) => (
-                  <li key={index} className="text-white">
-                    {member.user.username}
-                    {index === 0 && ' ⭐'}
-                  </li>
-                ))}
+              {groupMembers[groupItem.group.id]?.sort((a, b) => new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime()).map((member, index) => (
+              <li key={index} className="text-white flex justify-between items-center">
+             <span>
+            {member.user.username}
+            {index === 0 && ' ⭐'}
+            </span>
+            {index !== 0 && (
+            <button onClick={() => {
+              setMemberToRemove({ member: member, groupId: groupItem.group.id });
+                setIsRemoveMemberModalOpen(true);
+            }} className="text-red-600 border border-red-600 px-2 py-1 rounded-md">
+                Supprimer
+            </button>
+        )}
+    </li>
+))}
+
               </ul>
             </div>
           </div>
         ))
-        
       )}
+  <ConfirmDeleteModal 
+              isOpen={isConfirmModalOpen}
+              onConfirm={confirmDeleteGroup}
+              onCancel={() => setIsConfirmModalOpen(false)}
+          />
 
+  <AddMemberModal
+    isOpen={isAddMemberModalOpen}
+    onAdd={(email) => submitAddMember(email)}
+    onCancel={() => setIsAddMemberModalOpen(false)}
+          />
+  <RemoveMemberModal
+    isOpen={isRemoveMemberModalOpen}
+    memberName={memberToRemove?.member.user.username}
+    onRemove={removeGroupMember}
+    onCancel={() => setIsRemoveMemberModalOpen(false)}
+/>
 
-  {isConfirmModalOpen && (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="bg-black bg-opacity-100 rounded-lg shadow-md p-6 w-[20%] mx-auto">
-        <h2 className="text-2xl font-semibold mb-4">Supprimer le groupe</h2>
-        <p className="text-white">Etes vous sur de vouloir supprimer complétement le groupe?</p>
-        <div className="mt-4 flex justify-end">
-          <button
-            className="bg-red-500 text-white px-4 py-2 rounded mr-2"
-            onClick={confirmDeleteGroup}
-          >
-            Confirmer
-          </button>
-          <button
-            className="bg-gray-300 text-gray-800 px-4 py-2 rounded"
-            onClick={() => setIsConfirmModalOpen(false)}
-          >
-            Annuler
-          </button>
-        </div>
-      </div>
-    </div>
-  )}
     </div>
     <div className='flex w-80 bg-black bg-opacity-50 p-2 rounded-md shadow-md w-[70%] mx-auto space-y-4 max-h-[50vh] overflow-y-auto mt-4 justify-center items-center'>
     <button

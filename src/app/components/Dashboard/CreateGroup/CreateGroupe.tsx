@@ -54,12 +54,11 @@ const handleSubmit = async (e: React.FormEvent) => {
         userId: authContext.user.id
       })
     });
-    console.log('ID de l\'utilisateur:', authContext.user.id);
+    
 
     if (response.ok) {
       const newGroup = await response.json();
-      console.log('Group created:', newGroup);
-      onGroupCreated();  // <-- Appeler la fonction ici
+      onGroupCreated();
     } else {
       const data = await response.json();
       console.error(data.error);

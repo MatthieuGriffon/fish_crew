@@ -7,8 +7,6 @@ export const getToken = (): string | null => {
 
 export const getUserFromToken = (): { userId: string; email: string } | null => {
   const token = getToken();
-  console.log('Token from utils/auth:', token);
-
   if (token) {
     try {
       // Remplacez 'YOUR_SECRET_KEY' par la clé secrète de votre choix
