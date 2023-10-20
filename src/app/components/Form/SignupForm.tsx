@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const SignupForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -30,17 +30,20 @@ const SignupForm: React.FC = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setSuccess('Inscription réussie !');
+        setSuccess('Inscription ,veuillez maintenant vous connecter !');
         setError(null);
-      } else {
+    } else {
         const errorData = await response.json();
-        setError(errorData.message);
+        console.log(errorData);
+        setError(errorData.error);
         setSuccess(null);
-      }
+    }
+    
     } catch (error) {
       setError('Une erreur est survenue.');
     }
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="flex items-center space-x-3 p-2 shadow-md rounded text-xs">
@@ -86,9 +89,10 @@ const SignupForm: React.FC = () => {
       >
         S'inscrire
       </button>
-      {error && <div className="text-red-500">{error}</div>}
-      {success && <div className="text-green-500">{success}</div>}
+      {error && <div className="text-red-500 bg-white p-1">{error}</div>}
+      {success && <div className="text-green-500 bg-white p-1">{success}</div>}
     </form>
+    
   );
 };
 

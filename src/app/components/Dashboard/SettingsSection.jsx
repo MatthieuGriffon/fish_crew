@@ -3,7 +3,7 @@ import React from 'react';
 const SettingsSection = () => {
   return (
     <div>
-      <h1>SettingsSection</h1>
+      <h1>Mes prise</h1>
     </div>
   );
 };

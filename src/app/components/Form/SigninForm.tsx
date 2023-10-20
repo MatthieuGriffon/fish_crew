@@ -82,7 +82,7 @@ const SigninForm: React.FC = () => {
       >
         Connexion
       </button>
-      {error && <div className="text-red-500">{error}</div>}
+      {error && <div className="text-red-500 bg-white p-1">{error}</div>}
     </form>
   );
 };
