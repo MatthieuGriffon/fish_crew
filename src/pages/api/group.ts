@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           group: true,
         },
       });
-
+      console.log('userGroups', userGroups);
       const allGroupMembers: { [key: string]: Array<any> } = {};
 
       for (let groupItem of userGroups) {
