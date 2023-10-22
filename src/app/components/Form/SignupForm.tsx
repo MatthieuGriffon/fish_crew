@@ -34,7 +34,6 @@ const SignupForm: React.FC = () => {
         setError(null);
     } else {
         const errorData = await response.json();
-        console.log(errorData);
         setError(errorData.error);
         setSuccess(null);
     }
