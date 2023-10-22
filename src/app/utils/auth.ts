@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { AuthContext } from '../../contexts/AuthContext';
 export const getToken = (): string | null => {
-  const token = localStorage.getItem('token');
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
   return token;
 };
 
