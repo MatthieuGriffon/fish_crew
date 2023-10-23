@@ -2,7 +2,9 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Navbar from './components/Navbar/Navbar'
+import MenuLeft from './components/Menu/MenuLeft'
 import Image from 'next/image'
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,16 +21,22 @@ const RootLayout: React.FC<Props> = ({ children }) => {
   return (
     <html lang="fr">
       <head />
-      <body >
+      <body className="relative z-0 w-full h-full">
       <div style={{ backgroundImage: 'url("/background_webp_image.webp")', backgroundSize: 'cover', backgroundPosition: 'center' }}
-  className="relative z-0 w-full h-full"
->
-
+      className="relative z-0 w-full h-full"
+      >
         <Navbar />
-        <div className="z-10">{children}</div>
-      </div>
+        <div className="flex">
+          <MenuLeft />
+          <div className="flex flex-col mt-10">
+            {children}
+          </div>  
+        </div>
+
+        </div>
       </body>
     </html>
   )
 }
-export default RootLayout
+
+export default RootLayout;

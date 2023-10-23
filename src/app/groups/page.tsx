@@ -80,11 +80,11 @@ const TokenPage: React.FC = () => {
   return (
     <div className="container mx-auto h-screen flex flex-col items-center text-black">
       {isLoggedIn ? (
-        <div className="mt-8 w-3/4">
-          <h2 className="text-2xl font-bold text-center uppercase mb-4">Liste des groupes:</h2>
+        <div className="mt-8 w-4/4 ml-[16rem]">
+          <h2 className="text-3xl bg-gray-800 font-extrabold text-center text-white mb-6 p-5">Liste des groupes :</h2>
           <table className="table-auto w-full">
             <thead>
-              <tr>
+              <tr className='text-white bg-gray-600'>
                 <th className="px-4 py-2">Nom</th>
                 <th className="px-4 py-2">Description</th>
                 <th className="px-4 py-2">Status</th>
@@ -93,11 +93,11 @@ const TokenPage: React.FC = () => {
             </thead>
             <tbody>
               {groups.map((group, index) => (
-                <tr key={group.id} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200'}>
-                  <td className="border px-4 py-2">{group.name}</td>
-                  <td className="border px-4 py-2">{group.description}</td>
-                  <td className="border px-4 py-2">{group.isPublic ? 'Public' : 'Private'}</td>
-                  <td className="border px-4 py-2">
+                <tr key={group.id} className={index % 2 === 0 ? 'bg-gray-600' : 'bg-gray-800'}>
+                  <td className="border px-4 py-2 text-white">{group.name}</td>
+                  <td className="border px-4 py-2 text-white">{group.description}</td>
+                  <td className="border px-4 py-2 text-center text-white">{group.isPublic ? 'Public' : 'Private'}</td>
+                  <td className="border px-4 py-2 text-center text-white">
                     {group.isPublic ? (
                       group.isMember ? (
                         <span className="text-green-500">Membre du groupe</span>
@@ -116,8 +116,10 @@ const TokenPage: React.FC = () => {
           </table>
         </div>
       ) : (
-        <div className="mt-8">
-          <p className="text-xl font-semibold">User not logged in. Please log in to view groups.</p>
+        <div className="bg-gray-200 p-4 rounded-lg mt-8">
+        <p className="text-xl font-semibold text-red-500">
+        Utilisateur non connecté. Veuillez vous connecter pour voir les groupes.
+        </p>
         </div>
       )}
     </div>
