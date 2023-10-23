@@ -27,6 +27,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
       >
         <Navbar />
         <div className="flex">
+          
           <MenuLeft />
           <div className="flex flex-col mt-10">
             {children}
