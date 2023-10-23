@@ -56,9 +56,9 @@ const MenuLeft = () => {
                     <li>
                         <Link
                             className={`link block py-2 px-4 rounded-lg ${
-                                pathname === 'groups' ? 'bg-blue-500' : 'hover:bg-blue-500 hover:text-white'
+                                pathname === 'map' ? 'bg-blue-500' : 'hover:bg-blue-500 hover:text-white'
                             }`}
-                            href="/groups"
+                            href="/map"
                         >
                             Carte
                         </Link>
