@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { groupId } = req.query; // Obtenez l'ID du groupe à partir de la requête
+    const { groupId } = req.query; 
 
     try {
       if (groupId) {

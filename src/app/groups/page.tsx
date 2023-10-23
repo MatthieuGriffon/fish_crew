@@ -26,11 +26,11 @@ interface Group {
   groupMembers: GroupMember[];
 }
 
-const TokenPage: React.FC = () => {
+const GroupPage: React.FC = () => {
   const [userID, setUserID] = useState<string>('');
   const [groups, setGroups] = useState<Group[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
-
+  const [refreshKeyJoinGroup, setRefreshKeyJoinGroup] = useState(0); 
   useEffect(() => {
     let token = '';
 
@@ -75,13 +75,33 @@ const TokenPage: React.FC = () => {
     };
 
     fetchGroups();
-  }, [userID, isLoggedIn]);
+  }, [userID, isLoggedIn, refreshKeyJoinGroup]);
 
+  const joinGroup = async (groupId: string) => {
+    try {
+      const response = await fetch(`/api/groups/joinGroup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: userID, groupId }), // Assurez-vous que les données sont correctement envoyées
+      });
+
+      if (response.ok) {
+        console.log('Utilisateur ajouté au groupe avec succès !');
+        setRefreshKeyJoinGroup(prevKey => prevKey + 1);
+      } else {
+        console.error('Échec de la requête de rejoindre le groupe');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la requête de rejoindre le groupe :', error);
+    }
+  };
   return (
-    <div className="container mx-auto h-screen flex flex-col items-center text-black">
+    <div className="container mx-auto h-screen flex flex-col items-center text-black opacity-4">
       {isLoggedIn ? (
-        <div className="mt-8 w-4/4 ml-[16rem]">
-          <h2 className="text-3xl bg-gray-800 font-extrabold text-center text-white mb-6 p-5">Liste des groupes :</h2>
+        <div className="mt-8 w-4/4 ml-[16rem] opacity-4">
+          <h2 className="text-3xl bg-gray-400  font-extrabold text-center text-white mb-6 p-5">Liste des groupes :</h2>
           <table className="table-auto w-full">
             <thead>
               <tr className='text-white bg-gray-600'>
@@ -102,7 +122,10 @@ const TokenPage: React.FC = () => {
                       group.isMember ? (
                         <span className="text-green-500">Membre du groupe</span>
                       ) : (
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        <button
+                          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                          onClick={() => joinGroup(group.id)}
+                        >
                           Rejoindre le groupe
                         </button>
                       )
@@ -126,4 +149,4 @@ const TokenPage: React.FC = () => {
   );
 };
 
-export default TokenPage;
+export default GroupPage;
