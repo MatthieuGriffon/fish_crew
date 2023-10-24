@@ -1,3 +1,4 @@
+'use client'
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
 export interface User {
@@ -91,6 +92,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
+    
     <AuthContext.Provider value={{ user, setUser, updateUser }}>
       {children}
     </AuthContext.Provider>
