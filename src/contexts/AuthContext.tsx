@@ -7,7 +7,13 @@ export interface User {
   email: string | null;
   city: string | null;
   department: string | null;
+  roleId: string | null;
+  role: string | null;
+  groupMembers: string | null;
+  catches: string | null;
+  chats: string | null;
 }
+
 export interface ProfileSectionPropsWithoutRole {
   toggleEditing: () => void;
   user: {
@@ -76,6 +82,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               email: userData.email,
               city: userData.city !== undefined ? userData.city : null,
               department: userData.department !== undefined ? userData.department : null,
+              roleId: userData.roleId !== undefined ? userData.roleId : null,
+              role: userData.role !== undefined ? userData.role : null,
+              groupMembers: userData.groupMembers !== undefined ? userData.groupMembers : null,
+              catches: userData.catches !== undefined ? userData.catches : null,
+              chats: userData.chats !== undefined ? userData.chats : null,
             };
 
             setUser(updatedUser);
