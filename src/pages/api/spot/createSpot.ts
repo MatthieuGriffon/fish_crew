@@ -21,6 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Could not create spot' });
+    } finally {
+      await prisma.$disconnect(); // Fermeture de l'instance Prisma
     }
   } else {
     res.status(405).json({ error: 'Method Not Allowed' });

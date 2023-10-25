@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           group: true,
         },
       });
-      console.log('userGroups:', userGroups); // Ajout d'un console.log pour vérifier les groupes récupérés pour l'utilisateur
+      
 
       const allGroupMembers: { [key: string]: Array<any> } = {};
 
@@ -41,7 +41,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         allGroupMembers[groupId] = groupMembers;
       }
-      console.log('allGroupMembers:', allGroupMembers); // Ajout d'un console.log pour vérifier tous les membres de groupe pour l'utilisateur
 
       res.status(200).json({
         userGroups,

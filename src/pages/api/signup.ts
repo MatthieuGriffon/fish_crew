@@ -86,7 +86,9 @@ export default async function handler(
     } catch (error) {
       const e = error as Error;
       return res.status(500).json({ error: e.message });
-
+    }
+    finally {
+      await prisma.$disconnect();
     }
   } else {
     res.status(405).end();

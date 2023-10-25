@@ -2,11 +2,9 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Marker, Popup, useMap } from 'react-leaflet';
 import { AuthContext } from '@/contexts/AuthContext';
 import { Group } from '../../../../types/user';
+import { MarkerType } from '../../../../types/marker';
 
-interface MarkerType {
-  lat: number;
-  lng: number;
-}
+
 
 interface MapWithMarkerPopupProps {
   markers: MarkerType[];
@@ -22,6 +20,47 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
   const [userGroups, setUserGroups] = useState<Group[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [popupOpen, setPopupOpen] = useState(false);
+  const [fetchedMarkers, setFetchedMarkers] = useState<MarkerType[]>([]);
+
+  useEffect(() => {
+    const fetchMarkers = async () => {
+      console.log('on appelle bien la fonction fetchMarkers');
+      const token = localStorage.getItem('token');
+      if (token && authContext && authContext.user) {
+        try {
+          const response = await fetch(`/api/spot/getMarkers?userId=${authContext.user?.id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+  
+          const { markers } = await response.json();
+          console.log('Fetched markers:', markers);
+          setFetchedMarkers(markers); // Stockage des marqueurs dans l'état local
+          localStorage.setItem('fetchedMarkers', JSON.stringify(markers)); // Sauvegarde dans le stockage local
+        } catch (error) {
+          console.error('Failed to fetch markers:', error);
+        }
+      }
+    };
+  
+    const storedMarkers = localStorage.getItem('fetchedMarkers');
+    if (storedMarkers) {
+      setFetchedMarkers(JSON.parse(storedMarkers));
+    } else {
+      fetchMarkers();
+    }
+  }, [authContext]);
+  
+
+  
+  useEffect(() => {
+    localStorage.setItem('fetchedMarkers', JSON.stringify(fetchedMarkers));
+  }, [fetchedMarkers]);
 
   const fetchUserGroups = async () => {
     const token = localStorage.getItem('token');
@@ -82,47 +121,64 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
     setSelectedGroup(groupId);
   };
 
-  const handleSave = () => {
+  const handleSave = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+
+    if (!authContext || !authContext.user || !authContext.user.id) {
+        console.error("L'utilisateur n'est pas correctement authentifié.");
+        return;
+    }
+
     const newMarker = {
-      lat: markers[markers.length - 1].lat,
-      lng: markers[markers.length - 1].lng,
-      name,
-      description,
+        latitude: markers[markers.length - 1]?.lat,
+        longitude: markers[markers.length - 1]?.lng,
+        name,
+        description,
+        groupId: selectedGroup,
+        userId: authContext.user.id,
     };
 
+    if (newMarker.latitude === undefined || newMarker.longitude === undefined) {
+        console.error("La valeur de latitude ou de longitude n'est pas définie correctement.");
+        return;
+    }
+
+    console.log('données à envoyer à createSpot API:', newMarker);
+
     fetch('/api/spot/createSpot', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId: 'id',
-        groupId: 'groupId',
-        name: newMarker.name,
-        description: newMarker.description,
-        latitude: newMarker.lat,
-        longitude: newMarker.lng,
-      }),
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newMarker),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setName('');
-        setDescription('');
-        setShowMessage(true);
-        map.closePopup();
-        setTimeout(() => {
-          setShowMessage(false);
-        }, 3000);
-      })
-      .catch((error) => {
-        console.error('Error creating spot:', error);
-      });
-  };
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            setName('');
+            setDescription('');
+            setShowMessage(true);
+            map.closePopup();
+            setTimeout(() => {
+                setShowMessage(false);
+            }, 3000);
+
+            // Sauvegarde locale du nouveau spot
+            const storedMarkers = localStorage.getItem('fetchedMarkers');
+            const parsedMarkers = storedMarkers ? JSON.parse(storedMarkers) : [];
+            const updatedMarkers = [...parsedMarkers, newMarker];
+            localStorage.setItem('fetchedMarkers', JSON.stringify(updatedMarkers));
+        })
+        .catch((error) => {
+            console.error('Error creating spot:', error);
+        });
+};
+
+  
 
   return (
     <>
@@ -132,7 +188,7 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
         </div>
       )}
    {markers.map((marker, index) => (
-  <Marker key={index} position={[marker.lat, marker.lng]}>
+       <Marker key={index} position={[marker.lat, marker.lng]}>
     <Popup>
       <div className="flex flex-col items-center justify-center dark">
         <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-md p-6">
@@ -179,8 +235,22 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
         </div>
       </div>
     </Popup>
+       </Marker>
+))}
+    {fetchedMarkers && fetchedMarkers.map((marker, index) => (
+   
+  <Marker key={index + markers.length} position={[marker.lat, marker.lng]}>
+
+    <Popup>
+      <div>
+        <h2>Nom : {marker.name}</h2>
+        <p>Description : {marker.description}</p>
+        {/* Autres détails du marqueur que vous souhaitez afficher */}
+      </div>
+    </Popup>
   </Marker>
 ))}
+
     </>
   );
 };

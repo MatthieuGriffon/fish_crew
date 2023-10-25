@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import dynamic from 'next/dynamic';
 import { useMapEvents } from 'react-leaflet';
 import { AuthProvider, AuthContext } from '../../../contexts/AuthContext';
+import { MarkerType } from '../../../../types/marker';
 
 
 const MapWithMarkerPopup = dynamic(() => import('./MapWithMarkerPopup'), { loading: () => <p>Loading MapWithMarkerPopup...</p>, ssr: false });
@@ -24,11 +25,7 @@ const Map = () => {
     zIndex: 10,
   };
 
-  type MarkerType = {
-    lat: number;
-    lng: number;
-  };
-  
+ 
 
   const handleClick = (e: any) => {
     if (authContext && authContext.user) {
@@ -52,6 +49,9 @@ const Map = () => {
       }
     }
   }, []);
+
+
+  
 
   const MapView = () => {
     const map = useMap();

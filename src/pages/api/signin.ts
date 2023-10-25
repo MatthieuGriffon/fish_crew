@@ -10,36 +10,42 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'POST') {
-    const { email, password } = req.body;
-    const user = await prisma.user.findUnique({ where: { email } });
-    const isPasswordValid =
-      user && bcrypt.compareSync(password, user.passwordHash);
+    try {
+      const { email, password } = req.body;
+      const user = await prisma.user.findUnique({ where: { email } });
+      const isPasswordValid =
+        user && bcrypt.compareSync(password, user.passwordHash);
 
-    if (isPasswordValid) {
-      if (!process.env.JWT_SECRET) {
+      if (isPasswordValid) {
+        if (!process.env.JWT_SECRET) {
+          res
+            .status(500)
+            .json({ error: 'JWT_SECRET environment variable is not set' });
+          return;
+        }
+        const token = jwt.sign(
+          { userId: user.id, email: user.email },
+          process.env.JWT_SECRET as string,
+          { expiresIn: '1h' }
+        );
+        res.setHeader(
+          'Set-Cookie',
+          `token=${token}; HttpOnly; Secure; SameSite=Strict; Path=/`
+        );
+        res.status(200).json({ token, message: 'Connexion réussie' });
+      } else {
         res
-          .status(500)
-          .json({ error: 'JWT_SECRET environment variable is not set' });
-        return;
+          .status(401)
+          .json({ error: "Informations d'identification incorrectes" });
       }
-      const token = jwt.sign(
-        { userId: user.id, email: user.email },
-        process.env.JWT_SECRET as string,
-        { expiresIn: '1h' }
-      );
-      res.setHeader(
-        'Set-Cookie',
-        `token=${token}; HttpOnly; Secure; SameSite=Strict; Path=/`
-      );
-      res.status(200).json({ token, message: 'Connexion réussie' });
-    } else {
-      res
-        .status(401)
-        .json({ error: "Informations d'identification incorrectes" });
+    } catch (error) {
+      // Gérer les erreurs de manière appropriée
+      console.error('Une erreur s\'est produite :', error);
+      res.status(500).json({ error: 'Une erreur s\'est produite' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.status(405).end();
   }
 }
-
-
