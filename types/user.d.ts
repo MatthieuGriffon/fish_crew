@@ -13,8 +13,9 @@ export type User = {
   };
 
   export type Group = {
-    id: string;
-    name: string;
+    group: any;
+    id: string | null;
+    name: string | null;
     description: string | null;
     isPublic: boolean;
     createdAt: Date;

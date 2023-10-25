@@ -1,8 +1,7 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Marker, Popup, useMap } from 'react-leaflet';
-import { AuthProvider } from '@/contexts/AuthContext';
 import { AuthContext } from '@/contexts/AuthContext';
-import { User, Group } from '../../../../types/user';
+import { Group } from '../../../../types/user';
 
 interface MarkerType {
   lat: number;
@@ -24,22 +23,49 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [popupOpen, setPopupOpen] = useState(false);
 
-  if (authContext && authContext.user) {
-    const { id, username, email, city, department, roleId, role, groupMembers, catches,chats } = authContext.user;
-  }
+  const fetchUserGroups = async () => {
+    const token = localStorage.getItem('token');
+    if (token && authContext && authContext.user) {
+      try {
+        const response = await fetch(`/api/group?userId=${authContext.user?.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const { userGroups } = await response.json();
+        setUserGroups(userGroups);
+      } catch (error) {
+        console.error('Failed to fetch user groups:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const storedUserGroups = localStorage.getItem('userGroups');
+    if (storedUserGroups) {
+      setUserGroups(JSON.parse(storedUserGroups));
+    } else {
+      fetchUserGroups();
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('userGroups', JSON.stringify(userGroups));
+  }, [userGroups]);
+
   const handlePopupOpen = () => {
     setPopupOpen(true);
-    console.log('popupOpen:', popupOpen); // Ajout d'un console.log pour vérifier la valeur de popupOpen
-    fetchUserGroups(); // Appel de la fonction fetchUserGroups lorsque le popup s'ouvre
+    fetchUserGroups();
   };
-  useEffect(() => {
-    console.log('popupOpen:', popupOpen);
-  }, [popupOpen]);
 
-  
   const handlePopupClose = () => {
     setPopupOpen(false);
-    setUserGroups([]); // Réinitialisation des groupes utilisateur lorsque le popup est fermé
+    setUserGroups([]);
   };
 
   const handlePopupToggle = () => {
@@ -52,35 +78,10 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
     }
   };
 
-  const fetchUserGroups = async () => {
-    const token = localStorage.getItem('token');
-    if (token && authContext && authContext.user) {
-      try {
-        const response = await fetch(`/api/group?userId=${authContext.user?.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const { userGroups } = await response.json();
-          console.log('userGroups from API:', userGroups); // Ajout d'un console.log pour vérifier les groupes récupérés depuis l'API
-          setUserGroups(userGroups);
-          console.log('userGroups state after API call:', userGroups); // Ajout d'un console.log pour vérifier l'état de userGroups après l'appel à l'API
-        } else {
-          console.error('Failed to fetch user groups');
-        }
-      } catch (error) {
-        console.error('Failed to fetch user groups:', error);
-      }
-    }
-  };
-
- 
-
   const handleGroupChange = (groupId: string) => {
     setSelectedGroup(groupId);
   };
+
   const handleSave = () => {
     const newMarker = {
       lat: markers[markers.length - 1].lat,
@@ -88,17 +89,15 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
       name,
       description,
     };
-    console.log('newMarker:', newMarker);
 
-    // Envoi de données à l'API
     fetch('/api/spot/createSpot', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userId: 'id', // Remplacez par l'ID de l'utilisateur approprié
-        groupId: 'groupId', // Remplacez par l'ID du groupe approprié, si nécessaire
+        userId: 'id',
+        groupId: 'groupId',
         name: newMarker.name,
         description: newMarker.description,
         latitude: newMarker.lat,
@@ -112,7 +111,6 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
         return response.json();
       })
       .then((data) => {
-        console.log('Spot created successfully:', data);
         setName('');
         setDescription('');
         setShowMessage(true);
@@ -123,7 +121,6 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
       })
       .catch((error) => {
         console.error('Error creating spot:', error);
-        // Gérer l'erreur ici en affichant un message d'erreur approprié à l'utilisateur
       });
   };
 
@@ -134,54 +131,56 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
           Données enregistrées !
         </div>
       )}
-       {markers.map((marker, index) => (
-      <Marker key={index} position={[marker.lat, marker.lng]}>
-        <Popup>
-          <div className="p-4">
-              <label className="block mb-2">
-                <span className="text-gray-700">Nom:</span>
-                <input
-                  className="form-input mt-1 block w-full"
-                  type="text"
-                  value={name || ''}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </label>
-              <label className="block mb-2">
-                <span className="text-gray-700">Description:</span>
-                <input
-                  className="form-input mt-1 block w-full"
-                  type="text"
-                  value={description || ''}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </label>
-              <label className="block mb-2">
-                <span className="text-gray-700">Groupes:</span>
-                <select
-                  className="form-select mt-1 block w-full"
-                  onChange={(e) => handleGroupChange(e.target.value)}
-                >
-                  <option value="">Sélectionnez un groupe</option>
-                  {userGroups.map((group) => {
-                    return (
-                      <option key={group.id} value={group.id}>
-                        {group.name}
-                      </option>
-                    );
-                  })}
-                </select>
-              </label>
-              <button
-                onClick={handleSave}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Enregistrer
-              </button>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+   {markers.map((marker, index) => (
+  <Marker key={index} position={[marker.lat, marker.lng]}>
+    <Popup>
+      <div className="flex flex-col items-center justify-center dark">
+        <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-md p-6">
+          <h2 className="text-2xl font-bold text-gray-200 mb-4">Nouveau Marqueur</h2>
+
+          <form className="flex flex-col">
+            <input
+              placeholder="Nom"
+              className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+              type="text"
+              value={name || ''}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <input
+              placeholder="Description"
+              className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+              type="text"
+              value={description || ''}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <select
+              className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+              onChange={(e) => handleGroupChange(e.target.value)}
+              onFocus={() => {
+                fetchUserGroups();
+              }}
+            >
+              <option key="default" value="">
+                Sélectionnez un groupe
+              </option>
+              {userGroups.map((group) => (
+                <option key={group.group.id} value={group.group.id || ''}>
+                  {group.group.name}
+                </option>
+              ))}
+            </select>
+            <button
+              className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"
+              onClick={handleSave}
+            >
+              Enregistrer
+            </button>
+          </form>
+        </div>
+      </div>
+    </Popup>
+  </Marker>
+))}
     </>
   );
 };
