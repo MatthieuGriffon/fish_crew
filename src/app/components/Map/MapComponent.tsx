@@ -78,6 +78,21 @@ const MapComponent = () => {
     }
   };
 
+  const handleDeleteMarker = async (markerId: string) => {
+    try {
+      const response = await fetch(`/api/spot/deleteSpot?spotId=${markerId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const updatedMarkers = savedMarkers.filter((marker) => marker.id !== markerId);
+      setSavedMarkers(updatedMarkers);
+    } catch (error) {
+      console.error('Failed to delete marker:', error);
+    }
+  };
+
   useEffect(() => {
     handleGeolocation();
   }, []);
@@ -114,26 +129,31 @@ const MapComponent = () => {
             <Marker key={index} position={[marker.latitude, marker.longitude]}>
               <Popup>
                 {/* Insérez ici le contenu de la popup pour chaque marqueur sauvegardé */}
-                <div>
-                {marker.user ? (
-                  <h4>Ajouté par: {marker.user.username}</h4>
-                ) : (
-                  <h4>Ajouté par: Utilisateur inconnu</h4>
-                )}
-                {marker.group ? (
-                  <h3>Groupe : {marker.group.name}</h3>
-                ) : (
-                  <h3>Groupe : N/A</h3>
-                )}
-                <h3>Nom: {marker.name}</h3>
-                <h3>Description : {marker.description}</h3>
-              </div>
+                <div className="flex flex-col items-center justify-center dark">
+                  <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-md p-6">
+                    {marker.user ? (
+                      <h2 className="text-1xl font-bold text-gray-200 mb-4">Ajouté par: {marker.user.username}</h2>
+                    ) : (
+                      <h2 className="text-1xl font-bold text-gray-200 mb-4">Ajouté par: Utilisateur inconnu</h2>
+                    )}
+                    {marker.group ? (
+                      <h2 className="text-1xl font-bold text-gray-200 mb-4">Groupe : {marker.group.name}</h2>
+                    ) : (
+                      <h2 className="text-1xl font-bold text-gray-200 mb-4">Groupe : N/A</h2>
+                    )}
+                    <h2 className="text-1xl font-bold text-gray-200 mb-4">Nom: {marker.name}</h2>
+                    <h2 className="text-1xl font-bold text-gray-200 mb-4">Description : {marker.description}</h2>
+                    {authContext && authContext.user && marker.userId === authContext.user.id && (
+                      <button className="bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-red-600 hover:to-pink-600 transition ease-in-out duration-150" onClick={() => handleDeleteMarker(marker.id)}>
+                        Supprimer
+                      </button>
+                    )}
+                  </div>
+                </div>
               </Popup>
             </Marker>
           ))}
-        </div>
-
-          
+</div>
         </MapContainer>
       </div>
     </div>
