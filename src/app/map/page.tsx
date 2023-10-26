@@ -1,6 +1,5 @@
 'use client'
-import dynamic from 'next/dynamic';
-import React, { useContext } from 'react';
+import React from 'react';
 import { AuthProvider, AuthContext } from '../../contexts/AuthContext';
 import MapComponent from '../components/Map/MapComponent';
 

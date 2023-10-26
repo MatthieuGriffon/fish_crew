@@ -97,25 +97,7 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
     localStorage.setItem('userGroups', JSON.stringify(userGroups));
   }, [userGroups]);
 
-  const handlePopupOpen = () => {
-    setPopupOpen(true);
-    fetchUserGroups();
-  };
 
-  const handlePopupClose = () => {
-    setPopupOpen(false);
-    setUserGroups([]);
-  };
-
-  const handlePopupToggle = () => {
-    const updatedPopupOpen = !popupOpen;
-    setPopupOpen(updatedPopupOpen);
-    if (updatedPopupOpen) {
-      handlePopupOpen();
-    } else {
-      handlePopupClose();
-    }
-  };
 
   const handleGroupChange = (groupId: string) => {
     setSelectedGroup(groupId);
