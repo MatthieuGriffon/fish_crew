@@ -37,7 +37,7 @@ const MapComponent = () => {
       }
       const userId = authContext.user.id;
       console.log('userId du MapComponent', userId);
-      const response = await fetch(`/api/spot/getMarkers?userId=${userId}`);
+      const response = await fetch(`/api/spot/getMarkers?userId=${userId}`); // Assurez-vous de modifier le point de terminaison en conséquence
       console.log('response du FetchMarker',response)
       if (!response.ok) {
         throw new Error('Erreur lors de la récupération des marqueurs');
@@ -115,13 +115,24 @@ const MapComponent = () => {
               <Popup>
                 {/* Insérez ici le contenu de la popup pour chaque marqueur sauvegardé */}
                 <div>
-                  <h3>Nom: {marker.name}</h3>
-                  <h3>Description : {marker.description}</h3>
-                </div>
+                {marker.user ? (
+                  <h4>Ajouté par: {marker.user.username}</h4>
+                ) : (
+                  <h4>Ajouté par: Utilisateur inconnu</h4>
+                )}
+                {marker.group ? (
+                  <h3>Groupe : {marker.group.name}</h3>
+                ) : (
+                  <h3>Groupe : N/A</h3>
+                )}
+                <h3>Nom: {marker.name}</h3>
+                <h3>Description : {marker.description}</h3>
+              </div>
               </Popup>
             </Marker>
           ))}
         </div>
+
           
         </MapContainer>
       </div>

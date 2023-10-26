@@ -21,6 +21,13 @@ export interface MarkerData {
   longitude: number;
   description: string;
   groupId: string;
+  userId: string;
+  group?: {
+    name?: string;
+  };
+  user?: {
+    username: string;
+  };
   // Ajoutez d'autres propriétés ici si nécessaire
 }
   

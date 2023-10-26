@@ -8,14 +8,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'GET') {
     try {
       const userId = req.query.userId?.toString(); // Récupérer l'ID de l'utilisateur depuis la requête
-      const markers = await prisma.spot.findMany({
+      const markersWithUser = await prisma.spot.findMany({
         where: {
-          userId: {
-            equals: userId, // Filtrer les marqueurs par l'ID de l'utilisateur
-          },
+          OR: [
+            { 
+              group: { 
+                groupMembers: {
+                  some: { 
+                    userId: userId 
+                  } 
+                } 
+              } 
+            },
+            { 
+              userId: userId 
+            }
+          ]
+        },
+        include: {
+          user: true,
+          group: true
         },
       });
-      res.status(200).json(markers);
+      res.status(200).json(markersWithUser);
+      console.log('markerWithUser', markersWithUser);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Could not retrieve markers' });
