@@ -1,37 +1,36 @@
-# 🎣 Fish Crew
+🎣 Fish Crew
+Fish Crew 🐟 is a web application designed for fishing enthusiasts who want to share their favorite fishing spots with their friends.
+The application allows users to create public or private groups to invite people to join and share fishing locations.
+Users can mark points on the map 🗺️ and decide their visibility based on their group or public availability.
 
-Fish Crew 🐟 est une application Web conçue pour les passionnés de pêche qui souhaitent partager leurs spots de pêche préférés avec leurs amis. L'application permet de créer des groupes publics ou privés pour inviter des personnes à se joindre et à partager des emplacements de pêche. Les utilisateurs peuvent marquer des points sur la carte 🗺️ et décider de leur visibilité en fonction de leur groupe ou de la disponibilité publique.
+Key Features
 
-## Fonctionnalités clés
-
-- Création de groupes publics et privés pour partager des emplacements de pêche 🐠
-- Marquage de points sur la carte avec des détails sur les spots de pêche 📍
-- Gestion des membres des groupes, y compris l'invitation et la suppression de membres 👥
-- Visibilité sélective des spots de pêche en fonction des paramètres de confidentialité du groupe 🔒
-- Communication en temps réel entre les membres grâce à Socket.IO ⚡
-
-## Technologies utilisées
-
-- Next.js pour le développement de l'application web
-- React pour la construction de l'interface utilisateur
-- Leaflet pour l'intégration de la cartographie interactive
-- Socket.IO pour la communication en temps réel entre le serveur et le client
-- Prisma pour l'interaction avec la base de données MySQL
-- JSON Web Tokens (jsonwebtoken) pour l'authentification et la sécurité
-- bcrypt pour le hachage des mots de passe
-- Node.js pour exécuter du code JavaScript côté serveur
-- UUID pour la génération d'identifiants uniques
-- Dotenv pour la gestion des variables d'environnement
-- TypeScript pour ajouter un typage statique à JavaScript
-- Tailwind CSS pour la conception et la stylisation de l'interface utilisateur
-- Eslint pour l'analyse statique du code JavaScript
-
-## Installation
-
-Assurez-vous d'avoir Node.js et npm installés localement. Clonez le référentiel, puis exécutez les commandes suivantes :
+Creation of public and private groups for sharing fishing spots 🐠
+Marking points on the map with details about fishing spots 📍
+Management of group members, including inviting and removing members 👥
+Selective visibility of fishing spots based on group privacy settings 🔒
+Real-time communication among members through Socket.IO ⚡
+Technologies Used
+Next.js for web application development
+React for building the user interface
+Leaflet for integrating interactive mapping
+Socket.IO for real-time communication between server and client
+Prisma for interaction with the MySQL database
+JSON Web Tokens (jsonwebtoken) for authentication and security
+bcrypt for password hashing
+Node.js for running server-side JavaScript code
+UUID for generating unique identifiers
+Dotenv for managing environment variables
+TypeScript for adding static typing to JavaScript
+Tailwind CSS for designing and styling the user interface
+Eslint for static code analysis of JavaScript
+Installation
+Make sure you have Node.js and npm installed locally. Clone the repository, then run the following commands:
 
 ```bash
 npm install
 npm run dev
 ```
-Le serveur de développement devrait démarrer à l'adresse http://localhost:3000.
+The development server should start at http://localhost:3000.
+
+
