@@ -53,4 +53,20 @@ npm run dev
 ```
 The development server should start at http://localhost:3000.
 
+Configuration
+Make sure to set up environment variables in a separate .env file that will not be publicly shared.
+
+Include sensitive information such as database URLs, authentication secrets, and API keys in this file.
+
+Here is an example of the .env file structure:
+
+```bash
+DATABASE_URL=""
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=
+JWT_SECRET=
+MAILJET_API_KEY=
+MAILJET_API_SECRET=
+```
+
 
