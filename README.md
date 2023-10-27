@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🎣 Fish Crew
 
-## Getting Started
+Fish Crew 🐟 est une application Web conçue pour les passionnés de pêche qui souhaitent partager leurs spots de pêche préférés avec leurs amis.
+L'application permet de créer des groupes publics ou privés pour inviter des personnes à se joindre et à partager des emplacements de pêche. 
+Les utilisateurs peuvent marquer des points sur la carte 🗺️ et décider de leur visibilité en fonction de leur groupe ou de la disponibilité publique.
 
-First, run the development server:
+## Fonctionnalités clés
+
+- Création de groupes publics et privés pour partager des emplacements de pêche 🐠
+- Marquage de points sur la carte avec des détails sur les spots de pêche 📍
+- Gestion des membres des groupes, y compris l'invitation et la suppression de membres 👥
+- Visibilité sélective des spots de pêche en fonction des paramètres de confidentialité du groupe 🔒
+- Communication en temps réel entre les membres grâce à Socket.IO ⚡
+
+## Technologies utilisées
+
+- Next.js pour le développement de l'application web
+- React pour la construction de l'interface utilisateur
+- Leaflet pour l'intégration de la cartographie interactive
+- Socket.IO pour la communication en temps réel entre le serveur et le client
+- Prisma pour l'interaction avec la base de données MySQL
+- JSON Web Tokens (jsonwebtoken) pour l'authentification et la sécurité
+- bcrypt pour le hachage des mots de passe
+- Node.js pour exécuter du code JavaScript côté serveur
+- UUID pour la génération d'identifiants uniques
+- Dotenv pour la gestion des variables d'environnement
+- TypeScript pour ajouter un typage statique à JavaScript
+- Tailwind CSS pour la conception et la stylisation de l'interface utilisateur
+- Eslint pour l'analyse statique du code JavaScript
+
+## Installation
+
+Assurez-vous d'avoir Node.js et npm installés localement. Clonez le référentiel, puis exécutez les commandes suivantes :
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Le serveur de développement devrait démarrer à l'adresse http://localhost:3000.
