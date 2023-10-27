@@ -3,9 +3,7 @@ import { Marker, Popup, useMap } from 'react-leaflet';
 import { AuthContext } from '@/contexts/AuthContext';
 import { Group } from '../../../../types/user';
 import { MarkerType } from '../../../../types/marker';
-
-
-
+import { fetchMarkers, fetchUserGroups, checkAndSetUserGroups } from '@/app/lib/utils'; 
 interface MapWithMarkerPopupProps {
   markers: MarkerType[];
 }
@@ -16,93 +14,49 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [showMessage, setShowMessage] = useState(false);
-  const map = useMap();
   const [userGroups, setUserGroups] = useState<Group[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [popupOpen, setPopupOpen] = useState(false);
   const [fetchedMarkers, setFetchedMarkers] = useState<MarkerType[]>([]);
-  const [refreshMap, setRefreshMap] = useState(false);
+  const [refresh, setRefresh] = useState(false); // État pour gérer le rafraîchissement
+  const [refreshMap, setRefreshMap] = useState(false); // État pour rafraîchir la carte
 
-  let mapRef = useRef();
 
-  const renderMarkers = () => {
-  
-    const map = mapRef.current;
-    if (map) {
-      console.log(map.leafletElement.getZoom());
-      map.leafletElement._onResize(); 
-    }
-  };
+  const map = useMap();
+
 
   useEffect(() => {
-    renderMarkers();
-  }, [refreshMap]);
-
-  useEffect(() => {
-    const fetchMarkers = async () => {
-      const token = localStorage.getItem('token');
-      if (token && authContext && authContext.user) {
-        try {
-          const response = await fetch(`/api/spot/getMarkers?userId=${authContext.user?.id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-
-          const { markers } = await response.json();
-          setFetchedMarkers(markers);
-          localStorage.setItem('fetchedMarkers', JSON.stringify(markers));
-        } catch (error) {
-          console.error('Failed to fetch markers:', error);
-        }
-      }
-    };
-
+    const token = localStorage.getItem('token');
     const storedMarkers = localStorage.getItem('fetchedMarkers');
     if (storedMarkers) {
-      setFetchedMarkers(JSON.parse(storedMarkers));
+      try {
+        setFetchedMarkers(JSON.parse(storedMarkers));
+      } catch (error) {
+        console.error("Failed to parse JSON:", error);
+      }
     } else {
-      fetchMarkers();
+      fetchMarkers(token, authContext, setFetchedMarkers, setRefreshMap);
     }
   }, [authContext]);
+  
 
   useEffect(() => {
     localStorage.setItem('fetchedMarkers', JSON.stringify(fetchedMarkers));
+    console.log('fetchedMarkers', fetchedMarkers);
   }, [fetchedMarkers]);
 
-  const fetchUserGroups = async () => {
-    const token = localStorage.getItem('token');
-    if (token && authContext && authContext.user) {
-      try {
-        const response = await fetch(`/api/group?userId=${authContext.user?.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const { userGroups } = await response.json();
-        setUserGroups(userGroups);
-      } catch (error) {
-        console.error('Failed to fetch user groups:', error);
-      }
-    }
-  };
-
   useEffect(() => {
+    const token = localStorage.getItem('token');
     const storedUserGroups = localStorage.getItem('userGroups');
     if (storedUserGroups) {
       setUserGroups(JSON.parse(storedUserGroups));
     } else {
-      fetchUserGroups();
+      fetchUserGroups(token, authContext, setUserGroups);
     }
+  }, []);
+
+  useEffect(() => {
+    checkAndSetUserGroups(setUserGroups, authContext);
   }, []);
 
   useEffect(() => {
@@ -115,12 +69,14 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
 
   const handleSave = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-
+  
     if (!authContext || !authContext.user || !authContext.user.id) {
       console.error("L'utilisateur n'est pas correctement authentifié.");
       return;
     }
-
+  
+    const token = localStorage.getItem('token'); // Déplacez la récupération du token ici
+  
     const newMarker = {
       latitude: markers[markers.length - 1]?.lat,
       longitude: markers[markers.length - 1]?.lng,
@@ -129,14 +85,12 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
       groupId: selectedGroup,
       userId: authContext.user.id,
     };
-
+  
     if (newMarker.latitude === undefined || newMarker.longitude === undefined) {
       console.error("La valeur de latitude ou de longitude n'est pas définie correctement.");
       return;
     }
-
-    console.log('données à envoyer à createSpot API:', newMarker);
-
+  
     fetch('/api/spot/createSpot', {
       method: 'POST',
       headers: {
@@ -150,28 +104,40 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
         }
         return response.json();
       })
-      .then((data) => {
+      .then(() => {
         setName('');
         setDescription('');
         setShowMessage(true);
         map.closePopup();
         setTimeout(() => {
-          setShowMessage(false);
+            setShowMessage(false);           
         }, 3000);
-
+        fetchMarkers(token, authContext, setFetchedMarkers, setRefreshMap); 
+        console.log('fetchMarkers',fetchedMarkers);
         const storedMarkers = localStorage.getItem('fetchedMarkers');
-        const parsedMarkers = storedMarkers ? JSON.parse(storedMarkers) : [];
-        const updatedMarkers = [...parsedMarkers, newMarker];
-        localStorage.setItem('fetchedMarkers', JSON.stringify(updatedMarkers));
+        if (storedMarkers) {
+          try {
+            setFetchedMarkers(JSON.parse(storedMarkers));
+          } catch (error) {
+            console.error("Failed to parse JSON:", error);
+          }
+        } else {
+          fetchMarkers(token, authContext, setFetchedMarkers, setRefreshMap);
+        }
       })
       .catch((error) => {
         console.error('Error creating spot:', error);
       });
-    setRefreshMap(true);
+      setRefresh(prev => !prev);
+      setRefreshMap(prev => !prev);
+      
+      console.log(map);
   };
+  
 
 
   return (
+    <div key={refresh.toString()}>
     <>
       {showMessage && (
         <div className="z-50 fixed top-1/2 right-0 transform translate-y-[850%] -translate-x-[500%] mr-1 bg-green-500 text-white py-2 px-8 rounded">
@@ -204,7 +170,8 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
                     className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                     onChange={(e) => handleGroupChange(e.target.value)}
                     onFocus={() => {
-                      fetchUserGroups();
+                      const token = localStorage.getItem('token');
+                      fetchUserGroups(token, authContext, setUserGroups);
                     }}
                   >
                     <option key="default" value="">
@@ -240,6 +207,7 @@ const MapWithMarkerPopup: React.FC<MapWithMarkerPopupProps> = ({ markers }) => {
           </Marker>
         ))}
     </>
+    </div>
   );
 };
 
