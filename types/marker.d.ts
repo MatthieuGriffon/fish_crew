@@ -2,17 +2,26 @@ import { type } from "os";
 
 // types/marker.d.ts
 export interface MarkerType {
+  id: string;
     lat: number;
     lng: number;
     name?: string;
     description?: string;
     latitude?: number;
     longitude?: number;
+    groupId?: string | null;
+  userId?: string;
   }
+ 
 
 export type Marker = {
+  id: string;
   latitude: number;
   longitude: number;
+  name: string;
+    description: string;
+    groupId: string | null;
+    userId: string;
 };
 export interface MarkerData {
   id: string;

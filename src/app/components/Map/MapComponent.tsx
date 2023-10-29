@@ -8,6 +8,8 @@ import { AuthContext } from '../../../contexts/AuthContext';
 import { MarkerType, MarkerData  } from '../../../../types/marker';
 import { LeafletMouseEvent } from 'leaflet';
 
+
+
 const MapWithMarkerPopup = dynamic(() => import('./MapWithMarkerPopup'), {
   loading: () => <p>Loading MapWithMarkerPopup...</p>,
   ssr: false,
@@ -55,12 +57,14 @@ const MapComponent = () => {
     console.log('appel fonction recuperation des marqueur', fetchMarkers) 
   }, [authContext]);
 
-  
-
   const handleClick = (e: LeafletMouseEvent) => {
     if (authContext && authContext.user) {
       const { lat, lng } = e.latlng;
-      const newMarker = { lat, lng };
+      const newMarker: MarkerType = {
+        id: Date.now().toString(), // generate a unique id
+        lat,
+        lng,
+      };
       setMarkers([...markers, newMarker]);
     } else {
       console.log("L'utilisateur n'est pas connecté. Vous devez être connecté pour ajouter des marqueurs.", username);
@@ -77,7 +81,6 @@ const MapComponent = () => {
       console.error("La géolocalisation n'est pas prise en charge par votre navigateur.");
     }
   };
-
   const handleDeleteMarker = async (markerId: string) => {
     try {
       const response = await fetch(`/api/spot/deleteSpot?spotId=${markerId}`, {
@@ -86,12 +89,22 @@ const MapComponent = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      const updatedMarkers = savedMarkers.filter((marker) => marker.id !== markerId);
-      setSavedMarkers(updatedMarkers);
+      console.log('response du delete', response);
+      const updatedSavedMarkers = savedMarkers.filter((marker) => marker.id !== markerId);
+      setSavedMarkers(updatedSavedMarkers);
+      console.log('updatedSavedMarkers du delete', updatedSavedMarkers);
+      // Mise à jour des marqueurs affichés sur la carte
+      const updatedMarkers = markers.filter((marker) => marker.id !== markerId);
+      console.log('updatedMarkers du delete', updatedMarkers)
+      setMarkers(updatedMarkers);
+      console.log('updatedMarkers du delete', updatedMarkers);
     } catch (error) {
       console.error('Failed to delete marker:', error);
     }
   };
+  
+  
+  
 
   useEffect(() => {
     handleGeolocation();
@@ -114,6 +127,17 @@ const MapComponent = () => {
     return null;
   };
 
+
+const updateMarkers = async () => {
+  try {
+    fetchMarkers();
+    console.log("La fonction d'update des marqueurs a été appelée avec succès.");
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour des marqueurs :', error);
+  }
+};
+
+
   return (
     <div style={{ marginLeft: '5rem', height: '100vh', width: '90vw' }}>
       <div className="h-full" style={mapStyle}>
@@ -121,8 +145,9 @@ const MapComponent = () => {
           <MapClickHandler />
           <MapView />
           <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {userLocation && <Marker position={userLocation}><Popup>Votre position actuelle.</Popup></Marker>}
-          <MapWithMarkerPopup markers={markers} />
+        
+         
+          <MapWithMarkerPopup markers={markers} updateMarkers={updateMarkers}/>
           {/* Ajoutez une section pour afficher les marqueurs sauvegardés ici */}
           <div>
           {savedMarkers.map((marker, index) => (

@@ -1,27 +1,37 @@
 
 
-export const fetchMarkers = async (token: string | null, authContext: any, setFetchedMarkers: any, setRefreshMap: any) => {
-    if (token && authContext && authContext.user) {
-      try {
-        const response = await fetch(`/api/spot/getMarkers?userId=${authContext.user?.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-  
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-  
-        const { markers } = await response.json();
-        setFetchedMarkers(markers);
-        localStorage.setItem('fetchedMarkers', JSON.stringify(markers));
-        setRefreshMap((prev: any) => !prev);
-      } catch (error) {
-        console.error('Failed to fetch markers:', error);
+export const fetchMarkers = async (token: string | null, authContext: any, setFetchedMarkers: any, setSavedMarkers: any) => {
+  if (token && authContext && authContext.user) {
+    try {
+      const userId = authContext.user.id;
+      const response = await fetch(`/api/spot/getMarkers?userId=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+
+      const data = await response.json();
+
+      if (data) {
+        setFetchedMarkers(data);
+        localStorage.setItem('fetchedMarkers', JSON.stringify(data));
+        setSavedMarkers(data); // Si nécessaire, assurez-vous de définir également les marqueurs sauvegardés
+      } else {
+        console.log('No markers found');
+      }
+    } catch (error) {
+      console.error('Failed to fetch markers:', error);
     }
-  };
+  } else {
+    console.log('Token or authContext not available');
+  }
+};
+
+
 
   export const fetchUserGroups = async (token: string | null, authContext: any, setUserGroups: any) => {
     if (token && authContext && authContext.user) {
